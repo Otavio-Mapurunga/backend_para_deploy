@@ -23,7 +23,11 @@ from fastapi.middleware.cors import CORSMiddleware
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://projeto-extensao-pi.vercel.app", 
+        "http://localhost:5173",
+        "*"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -246,7 +250,7 @@ def test_access(telefone: str):
     if curso is None or str(curso).strip() == "":
         return {"canProceed": True, "curso" : None}   # → vai para /teste
     else:
-        return {"canProceed": False, "curso" : str(curso).strip}  # → vai para /resultado
+        return {"canProceed": False, "curso" : str(curso).strip()}  # → vai para /resultado
 
            
 @app.get("/api/coletar_dados_para_planilha")
