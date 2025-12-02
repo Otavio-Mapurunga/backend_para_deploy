@@ -228,7 +228,7 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
 def test_access(telefone: str):
     # Valida se a planilha carregou
     if sheets_service.STUDENTS_DATABASE is None or sheets_service.STUDENTS_DATABASE.empty:
-        return {"canProceed": True}
+        return {"canProceed": True, "curso" : None}
     
     telefone_busca_limpo = re.sub(r'[^\d]', '', telefone.strip())
     
@@ -238,15 +238,15 @@ def test_access(telefone: str):
 
     # Se não encontrou → aluno novo → pode fazer o teste
     if user.empty:
-        return {"canProceed": True}
+        return {"canProceed": True, "curso" : None}
 
     # Se encontrou, verifica se já tem curso
     curso = user.iloc[0].get("CURSO_REALIZADO", "")
 
     if curso is None or str(curso).strip() == "":
-        return {"canProceed": True}   # → vai para /teste
+        return {"canProceed": True, "curso" : None}   # → vai para /teste
     else:
-        return {"canProceed": False}  # → vai para /resultado
+        return {"canProceed": False, "curso" : str(curso).strip}  # → vai para /resultado
 
            
 @app.get("/api/coletar_dados_para_planilha")
