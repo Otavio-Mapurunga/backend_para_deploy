@@ -12,5 +12,6 @@ class ResultadoQuestionario(BaseModel):
     telefone: str
     email: EmailStr
     area_final: str = Field(alias="recommendedArea")
+    curso: Optional[str] = None
     class Config:
         populate_by_name = True
