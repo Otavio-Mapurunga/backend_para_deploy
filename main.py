@@ -13,16 +13,18 @@ from typing import Optional,Dict,Any
 
 load_dotenv()
 
-# ----- CONFIG SUPABASE -----
-SUPABASE_URL = os.getenv("SUPABASE_URL","")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY","")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = (os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 app = FastAPI()
 
-# ----- CORS -----
+#rotas e caminhos que o backend pode aceitar 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*", "http://localhost:5173", "https://projeto-extensao-pi.vercel.app"],
@@ -37,7 +39,19 @@ def root():
 
 @app.post("/api/login")
 def login(data: LoginData):
-
+    def teste_planilha():
+        try:
+            resposta = supabase.table ("alunos").select("*")
+            if resposta.data:
+                print("Conexão com supabase bem-sucessida")
+                return True
+            else:
+                print("Conexão com supabase funcionou, porém sem dados")
+                return False
+        except Exception as e:
+            print("Erro ao conectar com supabase:", str(e))
+            return False
+    teste_planilha()
     telefone = re.sub(r"[^\d]", "", data.telefone)
 
     # 1. Busca o aluno no Supabase
@@ -79,7 +93,6 @@ def login(data: LoginData):
         "token": token
     }
 
-
 @app.post("/api/submit_results")
 def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_scheme)):
     payload = decode_access_token(token)
@@ -95,17 +108,19 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
     resp = supabase.table("alunos").select("*").eq("telefone", telefone_token).execute()
     if len(resp.data) == 0:
         raise HTTPException(404, "Aluno não encontrado")
+    aluno: Optional[Dict[str, Any]] = None
+    if resp.data and isinstance (resp.data[0], dict):
+        aluno = resp.data[0]
+    if aluno is None:
+        raise HTTPException(500, "Erro interno inesperado: aluno não encontrado após consulta.")
 
-    aluno: Dict[str, Any] = resp.data[0]
-
-    # 2. Verifica se já fez o questionário
     # 2. Verifica se já fez o questionário
     if aluno["curso_realizado"] is not None:
         raise HTTPException(400, "Este aluno já realizou o questionário.")
 
     # 3. Atualiza com o resultado
     r = supabase.table("alunos").update({
-        "curso_realizado": data.curso.strip()
+        "curso_realizado": data.curso
     }).eq("telefone", telefone_token).execute()
 
     return {
@@ -113,10 +128,7 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
         "message": "Resultado salvo com sucesso",
         "curso": data.curso
     }
-
-# ===============================================
-#  VERIFICAR ACESSO (se pode fazer o teste)
-# ===============================================
+#se pode fazer o teste)
 @app.get("/api/test_access")
 def test_access(telefone: str):
 
@@ -126,10 +138,12 @@ def test_access(telefone: str):
     if len(resp.data) == 0:
         return {"canProceed": True, "curso": None}
 
-    aluno: Dict[str, Any] = resp.data[0]
+    aluno:Optional[ Dict[str, Any]] = None
+    if resp.data and isinstance (resp.data[0], dict):
+        aluno = resp.data[0]
 
-    if aluno["curso_realizado"] is None:
-    if aluno["curso_realizado"] is None:
-        return {"canProceed": True, "curso": None}
-    else:
-        return {"canProceed": False, "curso": aluno["curso_realizado"]}
+        if aluno["curso_realizado"] is None:
+            return {"canProceed": True, "curso": None}
+        else:
+            return {"canProceed": False, "curso": aluno["curso_realizado"]}
+
