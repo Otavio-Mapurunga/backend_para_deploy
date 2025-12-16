@@ -14,7 +14,6 @@ from typing import Optional,Dict,Any
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-#SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -25,10 +24,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 app = FastAPI()
 
-#rotas e caminhos que o backend pode aceitar 
+#rotas e caminhos que o backend pode aceitar
+origins=["*"] 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", "http://localhost:5173", "https://projeto-extensao-pi.vercel.app"],
+    allow_origins=["*", "http://localhost:5173", "https://projeto-extensao-pi.vercel.app", "origins"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
