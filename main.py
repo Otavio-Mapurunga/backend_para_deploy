@@ -27,8 +27,7 @@ app = FastAPI()
 #rotas e caminhos que o backend pode aceitar 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", "http://localhost:5173", "https://projeto-extensao-pi.vercel.app","http://192.168.0.12:8080"
-                ,"http://localhost:8080/Login"],
+    allow_origins=["http://localhost:8080", "https://projeto-extensao-pi.vercel.app","http://192.168.0.12:8080",],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
