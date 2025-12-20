@@ -52,3 +52,9 @@ Este backend foi preparado para deploy em ambiente de produção, permitindo int
 
 🔗 URL da API:https://backend-para-deploy.onrender.com
 
+O frontend deste projeto pode ser acessado no repositório abaixo:
+
+🔗 https://github.com/LianMary/projetoDeExtensao.git
+
+
+
