@@ -36,6 +36,7 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"status": "OK", "message": "Backend rodando com Supabase"}
+
 @app.options("/{path:path}")
 def options_handler(path: str):
     return {}
