@@ -34,5 +34,7 @@ O frontend deste projeto pode ser acessado no repositório abaixo:
 
 A documentação detalhada do sistema (arquitetura, banco de dados, lógica, casos de uso) está disponível no link abaixo:
 
+https://www.notion.so/Documenta-o-Backend-Sistema-de-Login-Teste-Vocacional-7afa4737f63a45e5b711cd12b0850835?source=copy_link
+
 
 
