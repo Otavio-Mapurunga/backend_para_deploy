@@ -17,7 +17,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int (os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+ACCESS_TOKEN_EXPIRE_MINUTES = int (os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES",60))
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
@@ -36,10 +36,6 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"status": "OK", "message": "Backend rodando com Supabase"}
-
-@app.options("/{path:path}")
-def options_handler(path: str):
-    return {}
 
 @app.post("/api/login")
 def login(data: LoginData):
@@ -111,10 +107,10 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
         raise HTTPException(400, "Este aluno já realizou o questionário.")
 
     # 3. Atualiza com o resultado
-    r = supabase.table("banco_de_alunos").update({
-        "curso_realizado": data.curso
-    }).eq("telefone", telefone_token).execute()
-
+    supabase.table("banco_de_alunos") \
+   .update({"curso_realizado": data.curso}) \
+   .eq("telefone", telefone_token) \
+   .execute()
     return {
         "status": "success",
         "message": "Resultado salvo com sucesso",
