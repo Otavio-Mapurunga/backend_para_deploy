@@ -8,9 +8,7 @@ class LoginData(BaseModel):
     email: EmailStr
 
 class ResultadoQuestionario(BaseModel):
-    nome: str
     telefone: str
-    email: EmailStr
     area_final: str = Field(alias="recommendedArea")
     curso: Optional[str] = None
     class Config:

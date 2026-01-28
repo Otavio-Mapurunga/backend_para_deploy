@@ -3,7 +3,6 @@ from typing import Optional
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 
-
 SECRET_KEY = "SUA_CHAVE_SECRETA_MUITO_FORTE"  
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 45
@@ -28,4 +27,4 @@ def decode_access_token(token: str):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
-        return None # Token inválido ou expirado
+        return None 
