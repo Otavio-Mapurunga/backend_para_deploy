@@ -86,31 +86,31 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(401, "Token inválido")
+
     telefone_token = payload.get("sub")
     telefone_limpo = re.sub(r"[^\d]", "", data.telefone)
 
     if telefone_limpo != telefone_token:
         raise HTTPException(401, "Token não corresponde ao telefone enviado")
 
-    # 1. Verifica se o aluno existe
+    # Verifica se o aluno existe
     resp = supabase.table("banco_de_alunos").select("*").eq("telefone", telefone_token).execute()
-    if len(resp.data) == 0:
+    if not resp.data:
         raise HTTPException(404, "Aluno não encontrado")
-    aluno: Optional[Dict[str, Any]] = None
-    if resp.data and isinstance (resp.data[0], dict):
-        aluno = resp.data[0]
+
+    aluno = resp.data[0] if isinstance(resp.data[0], dict) else None
     if aluno is None:
         raise HTTPException(500, "Erro interno inesperado: aluno não encontrado após consulta.")
 
-    # 2. Verifica se já fez o questionário
-    if aluno["curso_realizado"] is not None:
-        raise HTTPException(400, "Este aluno já realizou o questionário.")
+    # Atualiza com o resultado e a área recomendada
+    update_resp = supabase.table("banco_de_alunos") \
+        .update({"curso_realizado": data.curso, "area_recomendada": data.area_final}) \
+        .eq("telefone", telefone_token) \
+        .execute()
 
-    # 3. Atualiza com o resultado
-    supabase.table("banco_de_alunos") \
-   .update({"curso_realizado": data.curso, "area_recomenadada": data.area_final}) \
-   .eq("telefone", telefone_token) \
-   .execute()
+    if update_resp.status_code != 200:
+        raise HTTPException(500, "Erro ao atualizar os dados no banco de dados.")
+
     return {
         "status": "success",
         "message": "Resultado salvo com sucesso",
