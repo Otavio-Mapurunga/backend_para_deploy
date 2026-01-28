@@ -108,13 +108,14 @@ def submit_results(data: ResultadoQuestionario, token: str = Depends(oauth2_sche
 
     # 3. Atualiza com o resultado
     supabase.table("banco_de_alunos") \
-   .update({"curso_realizado": data.curso}) \
+   .update({"curso_realizado": data.curso, "area_recomenadada": data.area_final}) \
    .eq("telefone", telefone_token) \
    .execute()
     return {
         "status": "success",
         "message": "Resultado salvo com sucesso",
-        "curso": data.curso
+        "curso": data.curso,
+        "area": data.area_final
     }
 #se pode fazer o teste)
 @app.get("/api/test_access")
