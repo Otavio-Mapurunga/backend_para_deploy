@@ -59,7 +59,12 @@ def login(data: LoginData):
             "status": "novo",
             "message": "Cadastro criado. Prossiga para o questionário.",
             "hasResult": False,
-            "token": token
+            "token": token,
+            "aluno":{
+                "telefone":telefone,
+                "nome":data.nome.strip(),
+                "email": data.email.strip()  
+                                    }
         }
     # aluno EXISTE
     aluno: Optional[Dict[str, Any]] = None
@@ -78,7 +83,12 @@ def login(data: LoginData):
         "email": aluno.get("email"),
         "hasResult": aluno.get("curso_realizado") is not None,
         "curso": aluno.get("curso_realizado"),
-        "token": token
+        "token": token,
+        "aluno":{
+            "telefone":aluno.get("telefone"),
+            "nome":aluno.get("nome"),
+            "email":aluno.get("email")
+        }
     }
 
 @app.post("/api/submit_results")
