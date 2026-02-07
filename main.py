@@ -42,11 +42,11 @@ def login(data: LoginData):
     
     telefone = re.sub(r"[^\d]", "", data.telefone)
 
-    # 1. Busca o aluno no Supabase
+    #busca o aluno no Supabase
     resp = supabase.table("banco_de_alunos").select("*").eq("telefone", telefone).execute()
 
     if len(resp.data) == 0:
-        # cadastro novo
+        #novo aluno
         novo = supabase.table("banco_de_alunos").insert({
             "telefone": telefone,
             "nome": data.nome.strip(),
@@ -66,11 +66,10 @@ def login(data: LoginData):
                 "email": data.email.strip()  
                                     }
         }
-    # aluno EXISTE
+    #existente
     aluno: Optional[Dict[str, Any]] = None
     if resp.data and isinstance(resp.data[0], dict):
         aluno = resp.data[0]
-
     if aluno is None:
         raise HTTPException(500, "Erro interno inesperado: aluno não encontrado após consulta.")
 
@@ -87,7 +86,7 @@ def login(data: LoginData):
         "aluno":{
             "telefone":aluno.get("telefone"),
             "nome":aluno.get("nome"),
-            "email":aluno.get("email")
+            "email":aluno.get("e")
         }
     }
 
