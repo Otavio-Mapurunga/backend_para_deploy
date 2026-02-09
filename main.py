@@ -77,16 +77,13 @@ def login(data: LoginData):
 
     return {
         "status": "ok",
-        "nome": aluno.get("nome"),
-        "telefone": aluno.get("telefone"),
-        "email": aluno.get("email"),
         "hasResult": aluno.get("curso_realizado") is not None,
         "curso": aluno.get("curso_realizado"),
         "token": token,
         "aluno":{
             "telefone":aluno.get("telefone"),
             "nome":aluno.get("nome"),
-            "email":aluno.get("e")
+            "email":aluno.get("email")
         }
     }
 
