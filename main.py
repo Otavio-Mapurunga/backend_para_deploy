@@ -23,6 +23,10 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 app = FastAPI()
+from fastapi import Request
+@app.options("/{path:path}")
+async def options_handler(path:str,request:Request):
+    return {}
 
 #rotas e caminhos que o backend pode aceitar 
 app.add_middleware(
